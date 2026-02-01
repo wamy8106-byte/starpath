@@ -1,53 +1,67 @@
-import Link from 'next/link'
-import { Star, Moon, Sun, Sparkles } from 'lucide-react'
+import React from 'react';
+import Link from 'next/link';
+import { Check } from 'lucide-react';
 
-export default function Home() {
-  const signs = [
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 
-    'Leo', 'Virgo', 'Libra', 'Scorpio', 
-    'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-  ]
+export default function PricingPage() {
+  const plans = [
+    {
+      name: "Nebula (Free)",
+      price: "$0",
+      features: ["Daily Horoscope", "Standard AI Insights", "3 Queries/Day"],
+      button: "Current Plan",
+      highlight: false
+    },
+    {
+      name: "Supernova (Pro)",
+      price: "$9.90",
+      features: ["Unlimited Insights", "Deep Birth Chart Analysis", "Priority Support", "No Ads"],
+      button: "Upgrade Now",
+      highlight: true
+    },
+    {
+      name: "Galactic (VIP)",
+      price: "$29.90",
+      features: ["1-on-1 AI Astrologer", "Life Path Planning", "Beta Access to New Features"],
+      button: "Contact Sales",
+      highlight: false
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-[#0f0c29] text-white overflow-hidden relative">
-      {/* 动态星空背景 */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30"></div>
-      
-      <main className="relative z-10 max-w-6xl mx-auto px-4 pt-20 pb-32">
-        <nav className="flex justify-between items-center mb-16">
-          <div className="flex items-center gap-2 text-2xl font-bold tracking-tighter">
-            <Moon className="text-purple-400 fill-current" />
-            <span>StarPath</span>
+    <div className="min-h-screen bg-[#050510] text-white p-8">
+      <nav className="max-w-6xl mx-auto mb-16">
+        <Link href="/" className="text-purple-400 hover:text-purple-300">← Back to Universe</Link>
+      </nav>
+
+      <div className="max-w-6xl mx-auto text-center mb-16">
+        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+          Choose Your Cosmic Plan
+        </h1>
+        <p className="text-gray-400 text-xl">Unlock the full potential of your stellar journey.</p>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {plans.map((plan) => (
+          <div 
+            key={plan.name}
+            className={`p-8 rounded-3xl border ${plan.highlight ? 'border-purple-500 bg-purple-500/10 scale-105' : 'border-white/10 bg-white/5'} flex flex-col`}
+          >
+            <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+            <div className="text-4xl font-bold mb-6">{plan.price}<span className="text-sm text-gray-400 font-normal">/mo</span></div>
+            <ul className="space-y-4 mb-8 flex-grow">
+              {plan.features.map((feature) => (
+                <li key={feature} className="flex items-center text-gray-300 text-sm">
+                  <Check className="w-4 h-4 mr-2 text-purple-400" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            <button className={`w-full py-3 rounded-xl font-bold transition ${plan.highlight ? 'bg-purple-500 hover:bg-purple-600' : 'bg-white/10 hover:bg-white/20'}`}>
+              {plan.button}
+            </button>
           </div>
-          <Link href="/pricing" className="text-sm hover:text-purple-400 transition">Pricing</Link>
-        </nav>
-
-        <div className="text-center mb-20">
-          <h1 className="text-6xl md:text-8xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-purple-400">
-            Your Cosmic Journey <br/> Starts Here
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Unlock the mysteries of your birth chart with our AI-powered astrological insights. 
-            Real-time transits, personalized horoscopes, and more.
-          </p>
-        </div>
-
-        {/* 星座网格 */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-20">
-          {signs.map((sign) => (
-            <Link 
-              href={`/zodiac/${sign.toLowerCase()}`} 
-              key={sign}
-              className="group bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 hover:border-purple-500/50 transition-all text-center"
-            >
-              <div className="text-gray-400 group-hover:text-purple-400 mb-2 flex justify-center">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <span className="text-sm font-medium">{sign}</span>
-            </Link>
-          ))}
-        </div>
-      </main>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
