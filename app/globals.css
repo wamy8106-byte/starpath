@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ✅ Tailwind v4 主题配置直接写在 CSS 中 */
+@theme {
+  /* 定义动画变量 */
+  --animate-gradient-x: gradient-x 3s ease infinite;
+  --animate-blink: blink 0.8s step-end infinite;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* 定义关键帧 */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
   }
+  @keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+  }
+}
+
+/* ✅ 基础变量与全局样式 */
+:root {
+  --background: #050510; /* 深邃的星空底色 */
+  --foreground: #ededed;
+}
+
+/* 优化整体滚动体验 */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  /* 防止移动端点击高亮 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 背景星空层次感 */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
 }

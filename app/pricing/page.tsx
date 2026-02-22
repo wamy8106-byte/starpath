@@ -1,95 +1,184 @@
-"use client"; // 增加交互支持
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { Check, HelpCircle } from 'lucide-react';
+"use client";
 
-export default function PricingPageV2() {
-  const [isAnnual, setIsAnnual] = useState(true);
+import Link from "next/link";
+import { ArrowLeft, Check, Sparkles, Lock } from "lucide-react";
 
-  const plans = [
-    {
-      name: "Daily Snapshot",
-      desc: "Perfect for a quick cosmic check-in.",
-      price: "Free",
-      features: ["Daily General Horoscope", "Basic AI Insights", "3 Queries/Day"],
-      cta: "Current Plan",
-      highlight: false
-    },
-    {
-      name: "Cosmic Guidance",
-      desc: "Deep dive into your love & career path.",
-      price: isAnnual ? "$7.90" : "$9.90",
-      features: ["Unlimited Insights", "Love & Career Specifics", "Priority AI Processing", "Save History"],
-      cta: "Unlock My Destiny",
-      highlight: true,
-      badge: "Most Popular"
-    }
-  ];
+const tiers = [
+  {
+    name: "Free",
+    price: "$0",
+    sub: "Good for daily curiosity",
+    highlight: false,
+    features: [
+      "Daily reading (theme + 3 micro blocks)",
+      "Career/Love/Luck scores + advice",
+      "Personal Edge (basic rotation)",
+    ],
+    cta: "Continue Free",
+    href: "/",
+  },
+  {
+    name: "Pro",
+    price: "$9.99",
+    sub: "For people who want real behavioral change",
+    highlight: true,
+    features: [
+      "Personal Edge (smarter variety + memory)",
+      "Deeper Love & Career rituals",
+      "Less repetition across days",
+      "Priority generation speed",
+      "Pro-only UI + insights framing",
+    ],
+    cta: "Unlock Pro",
+    href: "#",
+    comingSoon: true,
+  },
+];
 
+const valueBullets = [
+  {
+    title: "Personal Edge = the main character",
+    desc: "Not generic horoscope lines—it's a targeted “action subtraction” for your day.",
+  },
+  {
+    title: "Less repetition, more precision",
+    desc: "We track what you’ve seen today, so the system avoids looping patterns.",
+  },
+  {
+    title: "Built for trust",
+    desc: "No morning/noon/night ambiguity. Same-day reading stays consistent globally.",
+  },
+];
+
+export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-[#050510] text-white p-6 font-sans">
-      {/* 1. 顶部价值主张 */}
-      <nav className="max-w-5xl mx-auto flex justify-between py-6">
-        <Link href="/" className="opacity-60 hover:opacity-100 transition">← Back to Stars</Link>
-      </nav>
+    <div className="min-h-screen bg-[#050510] text-white font-sans selection:bg-purple-500/30 pb-24">
+      {/* background glow */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-900/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[120px] rounded-full" />
+      </div>
 
-      <div className="max-w-4xl mx-auto text-center mt-10 mb-16">
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-          Your Future, <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent text-glow">Decoded.</span>
-        </h1>
-        <p className="text-gray-400 text-lg mb-10">Stop guessing. Get personalized AI astrological guidance daily.</p>
+      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition mb-10"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Stars
+        </Link>
 
-        {/* 2. 月付/年付切换 */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <span className={!isAnnual ? 'text-white' : 'text-gray-500'}>Monthly</span>
-          <button 
-            onClick={() => setIsAnnual(!isAnnual)}
-            className="w-14 h-7 bg-purple-900/50 rounded-full p-1 transition relative"
-          >
-            <div className={`w-5 h-5 bg-purple-500 rounded-full transition-all ${isAnnual ? 'translate-x-7' : 'translate-x-0'}`} />
-          </button>
-          <span className={isAnnual ? 'text-white' : 'text-gray-500'}>
-            Yearly <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full ml-1">Save 20%</span>
-          </span>
-        </div>
+        {/* header */}
+        <header className="text-center mb-14 space-y-5">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-widest text-slate-400 uppercase">
+            <Sparkles className="w-4 h-4 text-purple-400" />
+            <span>StarPath Pro</span>
+          </div>
 
-        {/* 3. 精简后的档位 */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {plans.map((plan) => (
-            <div key={plan.name} className={`relative p-8 rounded-3xl border transition-all duration-500 ${plan.highlight ? 'border-purple-500 bg-purple-500/5 shadow-[0_0_40px_-10px_rgba(168,85,247,0.4)] scale-105' : 'border-white/10 bg-white/5 opacity-80'}`}>
-              {plan.badge && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-xs font-bold px-3 py-1 rounded-full">{plan.badge}</div>}
-              <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-              <p className="text-sm text-gray-400 mb-6">{plan.desc}</p>
-              <div className="text-5xl font-bold mb-8">{plan.price}<span className="text-sm font-normal text-gray-500">/{isAnnual ? 'mo' : 'mo'}</span></div>
-              <ul className="space-y-4 mb-10 text-left">
-                {plan.features.map(f => (
-                  <li key={f} className="flex items-center gap-3 text-sm text-gray-300">
-                    <Check className="w-4 h-4 text-purple-400" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <button className={`w-full py-4 rounded-2xl font-bold transition-all ${plan.highlight ? 'bg-purple-600 hover:bg-purple-500 shadow-lg shadow-purple-500/20' : 'bg-white/10 hover:bg-white/20'}`}>
-                {plan.cta}
-              </button>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent">
+            Make Personal Edge the advantage
+          </h1>
+
+          <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto">
+            Pro is not “more astrology.” It’s more behavioral precision: less fluff, more actionable edges.
+          </p>
+        </header>
+
+        {/* value bullets */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14">
+          {valueBullets.map((b) => (
+            <div
+              key={b.title}
+              className="rounded-3xl bg-white/5 border border-white/10 p-6"
+            >
+              <div className="text-sm font-semibold text-white/90 mb-2">
+                {b.title}
+              </div>
+              <div className="text-sm text-slate-400 leading-relaxed">
+                {b.desc}
+              </div>
             </div>
           ))}
-        </div>
-      </div>
+        </section>
 
-      {/* 4. FAQ 简易版 */}
-      <div className="max-w-2xl mx-auto mt-24 mb-20 border-t border-white/10 pt-16">
-        <h2 className="text-2xl font-bold mb-10 text-center">Frequently Asked Questions</h2>
-        <div className="space-y-8">
-          <div>
-            <h4 className="flex items-center gap-2 font-bold mb-2 text-purple-300"><HelpCircle className="w-4 h-4"/> How accurate is the AI?</h4>
-            <p className="text-sm text-gray-400">Our AI uses real-time planetary positions and advanced GPT models trained on vast astrological data for high-precision readings.</p>
-          </div>
-          <div>
-            <h4 className="flex items-center gap-2 font-bold mb-2 text-purple-300"><HelpCircle className="w-4 h-4"/> Can I cancel anytime?</h4>
-            <p className="text-sm text-gray-400">Absolutely. No cosmic contracts here. Cancel with one click in your dashboard.</p>
-          </div>
+        {/* tiers */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {tiers.map((t) => (
+            <div
+              key={t.name}
+              className={[
+                "rounded-3xl p-[1px] overflow-hidden",
+                t.highlight
+                  ? "bg-gradient-to-r from-purple-600/70 via-fuchsia-500/50 to-blue-600/70"
+                  : "bg-white/10",
+              ].join(" ")}
+            >
+              <div
+                className={[
+                  "rounded-3xl p-8 h-full border border-white/10 bg-[#0b0b1a]/70",
+                  t.highlight ? "shadow-[0_0_60px_rgba(168,85,247,0.18)]" : "",
+                ].join(" ")}
+              >
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <div className="text-xl font-bold">{t.name}</div>
+                    <div className="text-sm text-slate-400 mt-1">{t.sub}</div>
+                  </div>
+
+                  {t.comingSoon ? (
+                    <div className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                      <Lock className="w-3 h-3" />
+                      Coming soon
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="flex items-end gap-2 mb-6">
+                  <div className="text-4xl font-black tracking-tight">
+                    {t.price}
+                  </div>
+                  <div className="text-sm text-slate-400 mb-1">/ month</div>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {t.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-slate-200">
+                      <Check className="w-5 h-5 text-purple-300 mt-0.5" />
+                      <span className="text-sm leading-relaxed">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {t.comingSoon ? (
+                  <button
+                    className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 text-sm text-slate-400 cursor-not-allowed"
+                    disabled
+                  >
+                    {t.cta}
+                  </button>
+                ) : (
+                  <Link
+                    href={t.href}
+                    className={[
+                      "block w-full text-center rounded-2xl py-3 text-sm font-semibold transition",
+                      t.highlight
+                        ? "bg-purple-600/90 hover:bg-purple-600 shadow-[0_10px_30px_-10px_rgba(168,85,247,0.6)]"
+                        : "bg-white/5 border border-white/10 hover:bg-white/10",
+                    ].join(" ")}
+                  >
+                    {t.cta}
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/* footer note */}
+        <div className="mt-14 text-center text-xs text-slate-500">
+          Tip: Pro’s biggest value is consistency + variety in Personal Edge—so it keeps feeling fresh, not repetitive.
         </div>
-      </div>
+      </main>
     </div>
   );
 }
