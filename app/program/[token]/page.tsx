@@ -9,6 +9,7 @@ import {
   validateProgramToken,
   type ProgramView,
 } from "@/lib/program";
+import { pollForPaidProgram } from "@/lib/payment-polling";
 
 type LoadState =
   | { status: "loading" }
@@ -17,6 +18,25 @@ type LoadState =
   | { status: "server-error"; message: string }
   | { status: "malformed-response"; message: string }
   | { status: "invalid-token"; message: string };
+
+type PaymentReturnState =
+  | { status: "idle" }
+  | { status: "cancelled" }
+  | { status: "processing" }
+  | { status: "confirmed" }
+  | { status: "timeout" }
+  | { status: "error"; message: string };
+
+type ProgramFetchResult =
+  | { status: "success"; program: ProgramView }
+  | {
+      status:
+        | "not-found"
+        | "server-error"
+        | "malformed-response"
+        | "invalid-token";
+      message: string;
+    };
 
 function cn(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -46,31 +66,29 @@ export default function ProgramTokenPage({
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [retryCount, setRetryCount] = useState(0);
   const [paying, setPaying] = useState(false);
+  const [paymentReturn, setPaymentReturn] = useState<PaymentReturnState>({
+    status: "idle",
+  });
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadProgram() {
+  const fetchProgram = useCallback(
+    async (signal?: AbortSignal): Promise<ProgramFetchResult> => {
       const tokenResult = validateProgramToken(token);
       if (!tokenResult.ok) {
-        setLoadState({
+        return {
           status: "invalid-token",
           message:
             tokenResult.reason === "missing"
               ? "This program link is missing its token."
               : "This program link contains an invalid token.",
-        });
-        return;
+        };
       }
-
-      setLoadState({ status: "loading" });
 
       try {
         const response = await fetch(
           `/api/program/${encodeURIComponent(tokenResult.token)}`,
           {
             cache: "no-store",
-            signal: controller.signal,
+            signal,
           }
         );
 
@@ -78,52 +96,82 @@ export default function ProgramTokenPage({
         try {
           body = await response.json();
         } catch {
-          setLoadState({
+          return {
             status: "malformed-response",
             message: "The server returned an unreadable program response.",
-          });
-          return;
+          };
         }
 
         if (response.status === 404) {
-          setLoadState({
+          return {
             status: "not-found",
             message: "No program was found for this link.",
-          });
-          return;
+          };
         }
 
         if (!response.ok) {
-          setLoadState({
+          return {
             status: "server-error",
             message: getErrorMessage(
               body,
               `The server could not load this program (${response.status}).`
             ),
-          });
-          return;
+          };
         }
 
         const parsed = parseProgramApiResponse(body);
         if (!parsed) {
-          setLoadState({
+          return {
             status: "malformed-response",
             message: "The program response is missing required data.",
-          });
-          return;
+          };
         }
 
-        setLoadState({ status: "ready", program: parsed.program });
+        return { status: "success", program: parsed.program };
       } catch (error: unknown) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-
-        setLoadState({
+        if (error instanceof DOMException && error.name === "AbortError") {
+          throw error;
+        }
+        return {
           status: "server-error",
           message:
             error instanceof Error
               ? error.message
               : "The server could not load this program.",
-        });
+        };
+      }
+    },
+    [token]
+  );
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("payment") === "cancelled") {
+      setPaymentReturn({ status: "cancelled" });
+    } else if (searchParams.get("paid") === "1") {
+      setPaymentReturn({ status: "processing" });
+    }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadProgram() {
+      setLoadState({ status: "loading" });
+      try {
+        const result = await fetchProgram(controller.signal);
+        if (result.status === "success") {
+          setLoadState({ status: "ready", program: result.program });
+        } else {
+          setLoadState(result);
+        }
+      } catch (error: unknown) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          setLoadState({
+            status: "server-error",
+            message: "The server could not load this program.",
+          });
+        }
       }
     }
 
@@ -132,7 +180,50 @@ export default function ProgramTokenPage({
     return () => {
       controller.abort();
     };
-  }, [retryCount, token]);
+  }, [fetchProgram, retryCount]);
+
+  useEffect(() => {
+    if (paymentReturn.status !== "processing" || loadState.status !== "ready") {
+      return;
+    }
+
+    if (loadState.program.is_paid) {
+      setPaymentReturn({ status: "confirmed" });
+      return;
+    }
+
+    const controller = new AbortController();
+
+    void pollForPaidProgram<ProgramView>({
+      signal: controller.signal,
+      maxAttempts: 10,
+      intervalMs: 1500,
+      async check() {
+        const result = await fetchProgram(controller.signal);
+        if (result.status !== "success") {
+          return {
+            status: "terminal-error" as const,
+            message: result.message,
+          };
+        }
+        if (result.program.is_paid) {
+          return { status: "paid" as const, value: result.program };
+        }
+        return { status: "unpaid" as const };
+      },
+    }).then((result) => {
+      if (result.status === "paid") {
+        setLoadState({ status: "ready", program: result.value });
+        setPaymentReturn({ status: "confirmed" });
+      } else if (result.status === "timeout") {
+        setPaymentReturn({ status: "timeout" });
+      } else if (result.status === "terminal-error") {
+        setPaymentReturn({ status: "error", message: result.message });
+      }
+    });
+
+    return () => controller.abort();
+  }, [fetchProgram, loadState, paymentReturn.status]);
 
   const retry = useCallback(() => {
     setRetryCount((count) => count + 1);
@@ -249,6 +340,11 @@ export default function ProgramTokenPage({
           <ProgramLoadError state={loadState} onRetry={retry} />
         ) : (
           <>
+            <PaymentReturnBanner
+              state={paymentReturn}
+              onRetry={() => setPaymentReturn({ status: "processing" })}
+            />
+
             {/* Paid status banner */}
             {!isPaid ? (
               <div className="mb-10 rounded-2xl border border-emerald-900/40 bg-emerald-950/15 p-5 flex items-start gap-3">
@@ -376,6 +472,60 @@ export default function ProgramTokenPage({
         )}
       </div>
     </main>
+  );
+}
+
+function PaymentReturnBanner({
+  state,
+  onRetry,
+}: {
+  state: PaymentReturnState;
+  onRetry: () => void;
+}) {
+  if (state.status === "idle") return null;
+
+  if (state.status === "cancelled") {
+    return (
+      <div className="mb-6 rounded-2xl border border-amber-700/40 bg-amber-950/20 p-5 text-sm text-amber-100">
+        Payment was cancelled. Day 1 remains available, and you have not been
+        charged.
+      </div>
+    );
+  }
+
+  if (state.status === "confirmed") {
+    return (
+      <div className="mb-6 rounded-2xl border border-emerald-700/40 bg-emerald-950/20 p-5 text-sm text-emerald-100">
+        Payment confirmed. The full 7-day program is now unlocked.
+      </div>
+    );
+  }
+
+  if (state.status === "processing") {
+    return (
+      <div className="mb-6 flex items-center gap-3 rounded-2xl border border-sky-700/40 bg-sky-950/20 p-5 text-sm text-sky-100">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        Payment received. Waiting for secure confirmation from Stripe…
+      </div>
+    );
+  }
+
+  const message =
+    state.status === "timeout"
+      ? "Payment confirmation is taking longer than expected. Do not pay again yet."
+      : state.message;
+
+  return (
+    <div className="mb-6 rounded-2xl border border-amber-700/40 bg-amber-950/20 p-5">
+      <div className="text-sm text-amber-100">{message}</div>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-50 hover:bg-amber-500/20 transition"
+      >
+        Check payment again
+      </button>
+    </div>
   );
 }
 
