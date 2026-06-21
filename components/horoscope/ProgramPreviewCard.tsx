@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Lock, Sparkles, ArrowRight, BadgeCheck } from "lucide-react";
 
-export function ProPreviewCard({
+export function ProgramPreviewCard({
   sign,
 }: {
   sign: string;
@@ -18,16 +18,16 @@ export function ProPreviewCard({
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/10 px-3 py-1 text-[10px] font-mono tracking-widest text-purple-200 uppercase">
             <Sparkles className="h-3.5 w-3.5" />
-            Pro Preview
+            Optional 7-Day Program
           </div>
 
           <h3 className="mt-4 text-2xl md:text-3xl font-extrabold tracking-tight">
-            Unlock deeper behavior precision
+            Turn today’s edge into a 7-day practice
           </h3>
           <p className="mt-2 text-white/70 max-w-2xl">
-            Pro adds <span className="text-white/90 font-semibold">rituals</span>, smarter
-            memory (less repetition), and a stronger <span className="text-white/90 font-semibold">
-            Personal Edge</span>—built to feel “specific to you”, not generic.
+            Start with Day 1 as a free preview. A one-time purchase unlocks six more
+            focused <span className="text-white/90 font-semibold">Personal Edge</span>{" "}
+            practices built for your sign.
           </p>
         </div>
 
@@ -40,16 +40,16 @@ export function ProPreviewCard({
       {/* preview rows */}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <PreviewItem
-          title="Pro Edge"
-          desc={`A sharper, ${sign}-tuned edge with stronger “why this fits you” framing.`}
+          title="Day 1 Preview"
+          desc={`A focused, ${sign}-tuned behavioral edge you can try before paying.`}
         />
         <PreviewItem
-          title="Love Ritual"
-          desc="2–3 concrete actions for today—low effort, high impact."
+          title="Days 2–4"
+          desc="Three more concrete constraints for clearer choices and communication."
         />
         <PreviewItem
-          title="Career Ritual"
-          desc="One decisive move + one boundary move (less overthinking)."
+          title="Days 5–7"
+          desc="Complete the full sequence with three additional behavioral practices."
         />
       </div>
 
@@ -57,15 +57,15 @@ export function ProPreviewCard({
         <div className="flex items-center gap-2 text-white/60">
           <BadgeCheck className="h-4 w-4 text-purple-300" />
           <span className="text-sm">
-            Pro benefit: <span className="text-white/80">consistency + variety</span>
+            One-time purchase: <span className="text-white/80">unlock Days 2–7</span>
           </span>
         </div>
 
         <Link
-          href="/pricing"
+          href="/program"
           className="inline-flex items-center justify-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-5 py-2.5 text-sm font-semibold text-purple-100 hover:bg-purple-500/15 transition"
         >
-          See Pro plans <ArrowRight className="h-4 w-4" />
+          Start Your 7-Day Program <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     </div>

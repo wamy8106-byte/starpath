@@ -148,7 +148,7 @@ export default function ProgramTokenPage({
         d ?? {
           day: i + 1,
           title: "Locked",
-          edge: "Upgrade to unlock.",
+          edge: "Unlock the full program.",
         }
       );
     });

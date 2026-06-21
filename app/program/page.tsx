@@ -109,7 +109,7 @@ export default function ProgramLandingPage() {
           <p className="mt-6 text-slate-400 max-w-2xl mx-auto">
             One purchase. One link. Your 7-day “Edge” grid.
             <br />
-            No login. No subscriptions. No daily maintenance.
+            One purchase. One private link. Day 1 is free to preview.
           </p>
         </div>
 
@@ -211,7 +211,7 @@ export default function ProgramLandingPage() {
             />
             <ValueCard
               title="Low maintenance"
-              desc="No subscriptions right now. One-off purchase model fits indie speed."
+              desc="Pay once to unlock Days 2–7 and keep your private program link."
             />
             <ValueCard
               title="Built for sharing"

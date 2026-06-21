@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Menu, X, Sparkles, User } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 
 type NavLink = {
   href: string;
   label: string;
-  badge?: string;
 };
 
 function cx(...arr: Array<string | false | undefined>) {
@@ -23,7 +22,6 @@ export default function NavBar() {
     () => [
       { href: "/", label: "Home" },
       { href: "/pricing", label: "Pricing" },
-      { href: "/pro", label: "Pro", badge: "Soon" }, // 先占位
     ],
     []
   );
@@ -65,15 +63,8 @@ export default function NavBar() {
                     ? "text-white border-white/20 bg-white/10"
                     : "text-white/70 border-white/10 hover:text-white hover:bg-white/5"
                 )}
-              >
-                <span className="inline-flex items-center gap-2">
-                  {l.label}
-                  {l.badge ? (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-200 bg-purple-500/10">
-                      {l.badge}
-                    </span>
-                  ) : null}
-                </span>
+                >
+                <span>{l.label}</span>
               </Link>
             );
           })}
@@ -82,18 +73,10 @@ export default function NavBar() {
         {/* Right: actions */}
         <div className="hidden md:flex items-center gap-2">
           <Link
-            href="/login"
-            className="px-3 py-2 rounded-full text-sm border border-white/10 text-white/80 hover:text-white hover:bg-white/5 transition inline-flex items-center gap-2"
-          >
-            <User className="w-4 h-4" />
-            Login
-          </Link>
-
-          <Link
-            href="/pricing"
+            href="/program"
             className="px-4 py-2 rounded-full text-sm font-semibold border border-purple-500/30 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15 transition"
           >
-            Upgrade
+            Get Your 7-Day Program
           </Link>
         </div>
 
@@ -126,29 +109,17 @@ export default function NavBar() {
                   )}
                 >
                   <span>{l.label}</span>
-                  {l.badge ? (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-200 bg-purple-500/10">
-                      {l.badge}
-                    </span>
-                  ) : null}
                 </Link>
               );
             })}
 
-            <div className="pt-2 mt-2 border-t border-white/10 flex gap-2">
+            <div className="pt-2 mt-2 border-t border-white/10">
               <Link
-                href="/login"
+                href="/program"
                 onClick={() => setOpen(false)}
-                className="flex-1 px-4 py-3 rounded-2xl border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 transition text-center"
+                className="block w-full px-4 py-3 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15 transition text-center font-semibold"
               >
-                Login
-              </Link>
-              <Link
-                href="/pricing"
-                onClick={() => setOpen(false)}
-                className="flex-1 px-4 py-3 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15 transition text-center font-semibold"
-              >
-                Upgrade
+                Get Your 7-Day Program
               </Link>
             </div>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Check, Sparkles, Lock } from "lucide-react";
+import { ArrowLeft, Check, Sparkles } from "lucide-react";
 
 const tiers = [
   {
@@ -18,20 +18,20 @@ const tiers = [
     href: "/",
   },
   {
-    name: "Pro",
+    name: "7-Day Personal Edge Program",
     price: "$9.99",
-    sub: "For people who want real behavioral change",
+    priceNote: "one-time",
+    sub: "A focused behavioral program built from your zodiac",
     highlight: true,
     features: [
-      "Personal Edge (smarter variety + memory)",
-      "Deeper Love & Career rituals",
-      "Less repetition across days",
-      "Priority generation speed",
-      "Pro-only UI + insights framing",
+      "Day 1 available as a free preview",
+      "Payment unlocks Days 2–7",
+      "Seven specific behavioral edges",
+      "Private program link",
+      "No account required",
     ],
-    cta: "Unlock Pro",
-    href: "#",
-    comingSoon: true,
+    cta: "Start Your 7-Day Program",
+    href: "/program",
   },
 ];
 
@@ -72,15 +72,15 @@ export default function PricingPage() {
         <header className="text-center mb-14 space-y-5">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-widest text-slate-400 uppercase">
             <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>StarPath Pro</span>
+            <span>StarPath Personal Edge Program</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent">
-            Make Personal Edge the advantage
+            Go beyond today’s reading
           </h1>
 
           <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto">
-            Pro is not “more astrology.” It’s more behavioral precision: less fluff, more actionable edges.
+            Keep the daily horoscope free, or choose a one-time 7-day program for a deeper behavioral reset.
           </p>
         </header>
 
@@ -125,19 +125,15 @@ export default function PricingPage() {
                     <div className="text-sm text-slate-400 mt-1">{t.sub}</div>
                   </div>
 
-                  {t.comingSoon ? (
-                    <div className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
-                      <Lock className="w-3 h-3" />
-                      Coming soon
-                    </div>
-                  ) : null}
                 </div>
 
                 <div className="flex items-end gap-2 mb-6">
                   <div className="text-4xl font-black tracking-tight">
                     {t.price}
                   </div>
-                  <div className="text-sm text-slate-400 mb-1">/ month</div>
+                  <div className="text-sm text-slate-400 mb-1">
+                    {t.priceNote ?? "free"}
+                  </div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -149,26 +145,17 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                {t.comingSoon ? (
-                  <button
-                    className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 text-sm text-slate-400 cursor-not-allowed"
-                    disabled
-                  >
-                    {t.cta}
-                  </button>
-                ) : (
-                  <Link
-                    href={t.href}
-                    className={[
-                      "block w-full text-center rounded-2xl py-3 text-sm font-semibold transition",
-                      t.highlight
-                        ? "bg-purple-600/90 hover:bg-purple-600 shadow-[0_10px_30px_-10px_rgba(168,85,247,0.6)]"
-                        : "bg-white/5 border border-white/10 hover:bg-white/10",
-                    ].join(" ")}
-                  >
-                    {t.cta}
-                  </Link>
-                )}
+                <Link
+                  href={t.href}
+                  className={[
+                    "block w-full text-center rounded-2xl py-3 text-sm font-semibold transition",
+                    t.highlight
+                      ? "bg-purple-600/90 hover:bg-purple-600 shadow-[0_10px_30px_-10px_rgba(168,85,247,0.6)]"
+                      : "bg-white/5 border border-white/10 hover:bg-white/10",
+                  ].join(" ")}
+                >
+                  {t.cta}
+                </Link>
               </div>
             </div>
           ))}
@@ -176,7 +163,7 @@ export default function PricingPage() {
 
         {/* footer note */}
         <div className="mt-14 text-center text-xs text-slate-500">
-          Tip: Pro’s biggest value is consistency + variety in Personal Edge—so it keeps feeling fresh, not repetitive.
+          One purchase unlocks the complete program. Your daily horoscope remains free.
         </div>
       </main>
     </div>

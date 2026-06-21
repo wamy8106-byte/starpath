@@ -6,7 +6,7 @@ import { ArrowLeft, Heart, Briefcase, Star, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { PersonalEdgeCard } from '@/components/horoscope/PersonalEdgeCard';
-import { ProPreviewCard } from '@/components/horoscope/ProPreviewCard';
+import { ProgramPreviewCard } from '@/components/horoscope/ProgramPreviewCard';
 
 type Section = {
   score: number;
@@ -150,9 +150,9 @@ export default function ZodiacDetail({ params }: { params: Promise<{ slug: strin
               </section>
             ) : null}
 
-            {/* ✅ Pro Preview (Locked teaser) */}
+            {/* Optional paid 7-day program */}
             <section>
-              <ProPreviewCard sign={sign} />
+              <ProgramPreviewCard sign={sign} />
             </section>
 
             {/* Micro blocks */}
@@ -252,7 +252,6 @@ function InsightCard({
     </div>
   );
 }
-
 
 
 

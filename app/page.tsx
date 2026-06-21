@@ -41,6 +41,17 @@ export default function HomePage() {
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto">
             Discover your daily cosmic alignment, behavioral edges, and actionable insights powered by AI.
           </p>
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm text-slate-500">
+              Daily readings are free. The 7-day program is an optional one-time purchase.
+            </p>
+            <Link
+              href="/program"
+              className="inline-flex items-center justify-center rounded-full border border-purple-500/30 bg-purple-500/10 px-5 py-2.5 text-sm font-semibold text-purple-100 hover:bg-purple-500/15 transition"
+            >
+              Start Your 7-Day Program
+            </Link>
+          </div>
         </header>
 
         {/* 12星座网格区 */}
